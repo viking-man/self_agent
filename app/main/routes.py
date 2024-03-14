@@ -162,7 +162,7 @@ def download_music():
     if not musicUrl:
         raise ParameterException("musicUrl")
     if not musicFilePath or not path.exists(musicFilePath):
-        raise ParameterException("video_path")
+        raise ParameterException("musicFilePath")
 
     music_file = agent_facade.download_spotify_music(musicUrl, musicFilePath)
 
