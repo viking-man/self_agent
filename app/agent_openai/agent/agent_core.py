@@ -31,21 +31,20 @@ class CustomPromptTemplate(StringPromptTemplate):
         # 没有互联网查询信息
         related_content = "\n"
         action_content = "\n"
+        background_content = "\n"
         if len(intermediate_steps) == 0:
-            background_infomation = "\n"
             template = router_template
 
         # 返回了背景信息
         else:
             # 根据 intermediate_steps 中的 AgentAction 拼装 background_infomation
-            background_infomation = "\n\n你还有这些已知信息作为参考：\n\n"
             action, observation = intermediate_steps[0]
             if isinstance(observation, tuple) or isinstance(observation, list):
-                background_infomation += observation[0]
+                background_content += observation[0]
                 related_content += observation[1]
             else:
-                background_infomation += f"{observation}\n"
-            if "Default" == action.tool or "History" == action.tool:
+                background_content += f"{observation}\n"
+            if "Default" == action.tool or "MBTI" == action.tool:
                 template = generate_template_zh
             elif "Introduce" == action.tool:
                 return observation
@@ -54,7 +53,7 @@ class CustomPromptTemplate(StringPromptTemplate):
                 template = action_template_zh
                 action_content = observation
 
-        kwargs["background_content"] = background_infomation
+        kwargs["background_content"] = background_content
         kwargs["related_content"] = related_content
         kwargs["action_content"] = action_content
         return template.format(**kwargs)
@@ -226,5 +225,5 @@ if __name__ == "__main__":
 
     langchain.debug = True
     ning_agent = NingAgent()
-    result = ning_agent.query("1+1=?")
+    result = ning_agent.query("INFP性格特点")
     print(result)
