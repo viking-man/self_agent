@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NingNing Agent</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='ning.JPG') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+<div class="container">
+    <img src="{{ url_for('static', filename='ning_wink.jpg') }}" class="icon">
+    <h3>宁宁小助理</h3>
+
+    <div class="chat-section">
+        <div id="chatBox"></div>
+        <textarea id="userMessage" class="question-textarea" placeholder="Ask me a question"></textarea>
+
+        <div class="options">
+            <label for="gptVersion">Choose GPT Version:</label>
+            <select id="gptVersion" name="gptVersion">
+                <option value="GPT3" selected>GPT3</option>
+                <option value="GPT4">GPT4</option>
+            </select>
+            <div class="action-buttons">
+                <button onclick="sendMessage()" class="blue-button">Text Chat</button>
+                <button id="recordButton" class="blue-button" onclick="toggleRecording()">Start audio</button>
+                <button id="clearButton" class="red-button" onclick="clearHistory()">Clear History</button>
+            </div>
+            <audio id="audioPlayer" controls>Your browser does not support the audio element.
+            </audio>
+        </div>
+    </div>
+
+    <div class="image-section">
+        <button class="green-button" onclick="getImageList()">Refresh Image List</button>
+        <select id="imageListDropdown" onclick="showSelectedImage()"></select>
+
+        <div id="imageDisplay" class="image-display">
+            <div class="image-popup" id="imagePopup">
+                <span class="close-btn" onclick="closeImagePopup()">×</span>
+                <img src="" alt="Image Display" id="popupImage">
+                <div>
+                    <button class="prev-btn" onclick="showPreviousImage()">Previous</button>
+                    <button class="next-btn" onclick="showNextImage()">Next</button>
+                    <button class="download-btn" onclick="downloadImage()">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="download-section" id="downloadSection">
+        <div class="download-header" onclick="toggleDownloadSection()">Download Section</div>
+
+        <div class="download-content">
+            <!-- 下载模块内容 -->
+            <div>
+                <form id="downloadVideoForm">
+                    <label for="videoUrl">Youtube Video URL:</label>
+                    <input type="text" id="videoUrl" placeholder="Enter video URL" required>
+
+                    <label for="videoFilePath">Video File Path:</label>
+                    <input type="text" id="videoFilePath" placeholder="Enter Video path name" required>
+
+                    <div>
+                        <label for="videoQuality">Video Quality:</label>
+                        <select id="videoQuality">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="SuperHigh">SuperHigh</option>
+                        </select>
+                    </div>
+                    <button id="downloadVideoButton" type="button" onclick="downloadVideo()">Download Video</button>
+                </form>
+            </div>
+            <div>
+                <form id="downloadMusicForm">
+                    <label for="musicUrl">Spotify Music URL:</label>
+                    <input type="text" id="musicUrl" placeholder="Enter video URL" required>
+
+                    <label for="musicFilePath">Music File Path:</label>
+                    <input type="text" id="musicFilePath" placeholder="Enter Music path name" required>
+
+                    <button id="downloadMusicButton" type="button" onclick="downloadMusic()">Download Music</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
+
+    <div class="translation-section" id="translationSection">
+        <div class="translation-header" onclick="toggleTranslationSection()">Subtitle Translation Section</div>
+
+        <div class="translation-content" id="translationContent">
+            <!-- 选择本地视频文件 -->
+            <label for="translationVideoFile">Select Video File:</label>
+            <input type="text" id="translationVideoFile" placeholder="Enter video URL" required>
+
+            <!-- 模型大小 -->
+            <div id="translationModelSelector">
+                <label for="translationModel">Select Translation Model Size:</label>
+                <select id="translationModel">
+                    <!-- 你可以在这里添加需要的翻译语言选项 -->
+                    <option value="small">Small</option>
+                    <option value="medium">Medium</option>
+                    <option value="large">large</option>
+                </select>
+            </div>
+
+            <!-- 选择翻译的语言 -->
+            <div id="translationSelector">
+                <label for="translationLanguage">Select Translation Language:</label>
+                <select id="translationLanguage">
+                    <!-- 你可以在这里添加需要的翻译语言选项 -->
+                    <option value="default">默认</option>
+                    <option value="zh">中文</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            <div id="translationSubtitle">
+                <!-- 复选框，确定使用字幕文件 -->
+                <label for="useSubtitleCheckbox">Use Subtitle File:</label>
+                <input type="checkbox" id="useSubtitleCheckbox" onclick="toggleSubtitleInput()">
+                <!-- 选择字幕文件 -->
+                <label for="translationSubtitleFile">Select Subtitle File:</label>
+                <input type="text" id="translationSubtitleFile" placeholder="Enter subtitle URL" disabled>
+            </div>
+            <!-- 提交选项按钮 -->
+            <button id="translationButton" onclick="submitTranslation()">Translation</button>
+        </div>
+    </div>
+
+
+</div>
+<script>
+
+    let chatId = "";
+    let chatHistory = "";
+    const User = "User"
+    const AI = "AI"
+    //真实环境通过用户系统获取
+    const userId = "jdh082312382992"
+
+    function displayMessage(role, message) {
+        const chatBox = document.getElementById('chatBox');
+        chatBox.innerHTML += `<p>${role}: ${message}</p>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function sendMessage() {
+        const userMessage = document.getElementById('userMessage').value;
+        const gptVersion = document.getElementById('gptVersion').value;
+        if (userMessage.trim() !== '') {
+            displayMessage(User, userMessage);
+            document.getElementById('userMessage').value = '';
+
+            fetch('/text_chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    user_id: userId,
+                    user_message: userMessage,
+                    chat_id: chatId,
+                    gpt_version: gptVersion
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    chatHistory = data.chat_history;
+                    chatId = data.chat_id
+                    displayMessage(AI, data.ai_message);
+                    fetchAudioFile(data.audio_id);
+                });
+        }
+    }
+
+    let mediaRecorder;
+    let isRecording = false;
+
+    function toggleRecording() {
+        if (!isRecording) {
+            startRecording();
+            document.getElementById('recordButton').textContent = 'End audio';
+        } else {
+            stopRecording();
+            document.getElementById('recordButton').textContent = 'Start audio';
+        }
+        isRecording = !isRecording;
+    }
+
+    function startRecording() {
+        navigator.mediaDevices.getUserMedia({audio: true})
+            .then(stream => {
+                mediaRecorder = new MediaRecorder(stream);
+                const chunks = [];
+
+                mediaRecorder.ondataavailable = event => {
+                    if (event.data.size > 0) {
+                        chunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(chunks, {type: 'audio/wav'});
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    console.log('Audio URL:', audioUrl);
+                    // {
+                    //     #const
+                    //     chatBoxDiv = document.getElementById('chatBox');
+                    // #
+                    // }
+                    // {
+                    //     #chatBoxDiv.innerHTML = `<audio controls src="${audioUrl}"></audio>`;
+                    // #
+                    // }
+                };
+
+                mediaRecorder.start();
+            })
+            .catch(error => {
+                console.error('Error accessing microphone:', error);
+            });
+    }
+
+    function stopRecording() {
+        const gptVersion = document.getElementById('gptVersion').value;
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+
+            //音频
+            mediaRecorder.ondataavailable = event => {
+                if (event.data.size > 0) {
+                    const formData = new FormData();
+                    formData.append('user_id', userId);
+                    formData.append('audio', event.data, 'audio.wav');  // 'audio.wav' is the file name
+                    formData.append('chat_id', chatId);
+                    formData.append('gpt_version', gptVersion);
+                    sendAudio(formData);
+                }
+            };
+        }
+    }
+
+    function sendAudio(formData) {
+        fetch('/speech_chat', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                // {
+                //     #const
+                //     chatBoxDiv = document.getElementById('chatBox');
+                // #
+                // }
+                // {
+                //     #chatBoxDiv.innerHTML = `<p>Transcription: ${data.transcription}</p>`;
+                // #
+                // }
+                chatHistory = data.chat_history
+                chatId = data.chat_id
+                displayMessage(User, data.user_message)
+                displayMessage(AI, data.ai_message)
+
+                fetchAudioFile(data.audio_id);
+            })
+            .catch(error => {
+                console.error('Error uploading audio:', error);
+            });
+    }
+
+    function fetchAudioFile(audioId) {
+        fetch('/get_audio', {
+            method: 'POST',
+            body: new URLSearchParams({user_id: userId, chat_id: chatId, audio_id: audioId})
+        })
+            .then(response => response.blob())
+            .then(blob => {
+                const audioUrl = URL.createObjectURL(blob);
+                const audioPlayer = document.getElementById('audioPlayer');
+                audioPlayer.src = audioUrl;
+                audioPlayer.play();
+                // {
+                //     #audioPlayer.style.display = 'none';
+                // #
+                // }
+            })
+            .catch(error => {
+                console.error('Error fetching audio file:', error);
+            });
+    }
+
+    function clearHistory() {
+        chatHistory = ""
+        chatId = ""
+        // 发起 AJAX 请求向后台发送清除历史记录的请求
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    // 清除成功，可以根据需要执行其他操作
+                    console.log('History cleared successfully');
+                    const chatBox = document.getElementById('chatBox');
+                    chatBox.innerHTML = ''; // 将这一行移动到这里
+                } else {
+                    // 清除失败，可以根据需要执行其他操作
+                    console.error('Failed to clear history');
+                }
+            }
+        };
+        xhr.open('POST', '/clear_history', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        // 在这里发送JSON主体包含userId
+        xhr.send(JSON.stringify({userId: userId}));
+        // 删除这一行：xhr.send();
+    }
+
+
+    window.onload = function () {
+        chatHistory = ""
+        chatId = ""
+
+        // fetch('/clear_history')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         // 你可以在此处处理响应数据
+        //         const chatBox = document.getElementById('chatBox');
+        //         chatBox.innerHTML = '';
+        //         console.log(data);
+        //     })
+        //     .catch(error => {
+        //         console.error('Error fetching data:', error);
+        //         openModal(error);
+        //     });
+        clearHistory()
+    };
+
+    // 初始图片列表为空
+    let imageListData = [];
+    let currentIndex = -1; // 初始索引值
+
+
+    // 刷新图片列表按钮点击事件
+    function refreshImageList() {
+
+        // 获取图片列表的元素
+        const imageListElement = document.getElementById('imageListDropdown');
+
+        // 清空之前的图片列表内容
+        imageListElement.innerHTML = '';
+
+        // 获取最新的图片列表
+        getImageList();
+    }
+
+    // 获取图片列表的函数
+    function getImageList() {
+        imageListData = [];
+        currentIndex = -1;
+
+        // 发起请求获取图片列表
+        fetch('/get_image_list', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // 添加其他可能的请求参数，例如用户ID
+            body: JSON.stringify({
+                userId: userId,
+            }),
+        })  // 这里的路径应该根据你的后端路由来设置
+            .then(response => response.json())
+            .then(data => {
+                // 获取图片列表数据
+                imageListData = data.imageList;
+
+                // 获取下拉列表的元素
+                const dropdown = document.getElementById('imageListDropdown');
+
+                // 清空之前的内容
+                dropdown.innerHTML = '';
+
+                // 将图片列表数据添加到下拉列表中
+                imageListData.forEach(imageName => {
+                    // 创建一个新的选项元素
+                    const optionElement = document.createElement('option');
+                    optionElement.value = imageName;
+                    optionElement.textContent = imageName;
+
+                    // 将选项元素添加到下拉列表中
+                    dropdown.appendChild(optionElement);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching image list:', error);
+                openModal(error.message || 'An error occurred while processing your request.');
+            });
+    }
+
+    // 初始加载图片列表
+    getImageList();
+
+    function showImage(imageName) {
+        const imageUrl = `/get_image?fileName=${imageName}`;
+        const popupImage = document.getElementById('popupImage');
+
+        fetch(imageUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                popupImage.src = URL.createObjectURL(blob);
+                openImagePopup();
+            })
+            .catch(error => {
+                console.error('Error fetching image:', error);
+                openModal(error.message || 'An error occurred while processing your request.');
+            });
+    }
+
+    function openImagePopup() {
+        const imagePopup = document.getElementById('imagePopup');
+        imagePopup.style.display = 'block';
+    }
+
+    function closeImagePopup() {
+        const imagePopup = document.getElementById('imagePopup');
+        imagePopup.style.display = 'none';
+    }
+
+    function showSelectedImage() {
+        const dropdown = document.getElementById('imageListDropdown');
+        const selectedImageName = dropdown.value;
+
+        if (selectedImageName) {
+            // 获取选中图片在列表中的索引
+            currentIndex = imageListData.indexOf(selectedImageName);
+            showImage(selectedImageName);
+        }
+    }
+
+    function showPreviousImage() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            const previousImage = imageListData[currentIndex];
+            showImage(previousImage);
+        } else {
+            // 如果已经是第一张图片，可以选择循环到最后一张图片
+            currentIndex = imageListData.length - 1;
+            const lastImage = imageListData[currentIndex];
+            showImage(lastImage);
+        }
+    }
+
+    function showNextImage() {
+        if (currentIndex < imageListData.length - 1) {
+            currentIndex++;
+            const nextImage = imageListData[currentIndex];
+            showImage(nextImage);
+        } else {
+            // 如果已经是最后一张图片，可以选择循环到第一张图片
+            currentIndex = 0;
+            const firstImage = imageListData[currentIndex];
+            showImage(firstImage);
+        }
+    }
+
+    function downloadImage() {
+        const popupImage = document.getElementById('popupImage');
+
+        // 获取当前图片的文件名
+        const selectedImageName = imageListData[currentIndex];
+
+        // 构造后端获取图片的接口
+        const imageUrl = `/get_image?fileName=${selectedImageName}`;
+
+        // 发起请求下载图片
+        fetch(imageUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // 创建一个临时的a标签用于下载
+                const a = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                a.href = url;
+                a.download = selectedImageName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            })
+            .catch(error => {
+                console.error('Error fetching image for download:', error.message);
+                openModal(error.message || 'An error occurred while processing your request.');
+            });
+    }
+
+    function toggleDownloadSection() {
+        const downloadContent = document.querySelector('.download-content');
+        downloadContent.classList.toggle('hidden');
+    }
+
+    toggleDownloadSection();
+
+    function toggleTranslationSection() {
+        const translationContent = document.querySelector('.translation-content');
+        translationContent.classList.toggle('hidden');
+    }
+
+    toggleTranslationSection();
+
+
+    // 下载模块
+    function openModal(message) {
+        const modal = document.getElementById('myModal');
+        const modalMessage = document.getElementById('modalMessage');
+        modalMessage.textContent = message;
+
+        // 动态计算模态框的宽度
+        const messageLength = message.length;
+        const modalWidth = Math.min(messageLength * 10, 1000); // 每个字符宽度为10px，最大宽度为600px
+        modal.style.width = `${modalWidth}px`;
+
+        modal.classList.add('showCloseButton', 'showModal');
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('myModal');
+        modal.classList.remove('showCloseButton', 'showModal');
+    }
+
+
+    // 示例用法
+    // openModal('This is a custom alert!');
+
+
+    function downloadVideo() {
+        const videoUrl = document.getElementById('videoUrl').value;
+        const videoFilePath = document.getElementById('videoFilePath').value;
+        const videoQuality = document.getElementById('videoQuality').value;
+        const downloadButton = document.getElementById('downloadVideoButton');
+
+        if (!videoUrl || !videoFilePath) {
+            alert('Please enter video URL and file name.');
+            return;
+        }
+
+        // 禁用按钮，显示加载状态
+        downloadButton.disabled = true;
+        downloadButton.innerHTML = 'Downloading...';
+
+        fetch('/download_video', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                chat_id: chatId,
+                videoUrl: videoUrl,
+                videoFilePath: videoFilePath,
+                videoQuality: videoQuality
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                // 你可以在此处处理响应数据
+                // const chatBox = document.getElementById('chatBox');
+                // chatBox.innerHTML = '';
+                console.log(data);
+                openModal(data.message)
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                openModal(error.message || 'An error occurred while processing your request.');
+            })
+            .finally(() => {
+                // 启用按钮，恢复原始状态
+                downloadButton.disabled = false;
+                downloadButton.innerHTML = 'Download Video';
+            });
+    }
+
+    function downloadMusic() {
+        const musicUrl = document.getElementById('musicUrl').value;
+        const musicFilePath = document.getElementById('musicFilePath').value;
+        const downloadButton = document.getElementById('downloadMusicButton');
+
+        if (!musicUrl || !musicFilePath) {
+            alert('Please enter video URL and file name.');
+            return;
+        }
+
+        // 禁用按钮，显示加载状态
+        downloadButton.disabled = true;
+        downloadButton.innerHTML = 'Downloading...';
+
+        fetch('/download_music', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                chat_id: chatId,
+                musicUrl: musicUrl,
+                musicFilePath: musicFilePath
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                // 你可以在此处处理响应数据
+                // const chatBox = document.getElementById('chatBox');
+                // chatBox.innerHTML = '';
+                console.log(data);
+                openModal(data.message)
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                openModal(error.message || 'An error occurred while processing your request.');
+            })
+            .finally(() => {
+                // 启用按钮，恢复原始状态
+                downloadButton.disabled = false;
+                downloadButton.innerHTML = 'Download Music';
+            });
+    }
+
+    function enableSubtitleInput(videoFileInput) {
+        const subtitleFileInput = document.getElementById('translationSubtitleFile');
+
+        if (videoFileInput.files.length > 0) {
+            // 用户选择了视频文件，根据复选框状态来启用或禁用字幕文件选择
+            if (document.getElementById('useSubtitleCheckbox').checked) {
+                subtitleFileInput.removeAttribute('disabled');
+            } else {
+                subtitleFileInput.setAttribute('disabled', 'disabled');
+            }
+        } else {
+            // 用户未选择视频文件，禁用字幕文件选择
+            subtitleFileInput.setAttribute('disabled', 'disabled');
+        }
+    }
+
+    function toggleSubtitleInput() {
+        const subtitleFileInput = document.getElementById('translationSubtitleFile');
+        const useSubtitleCheckbox = document.getElementById('useSubtitleCheckbox');
+
+        if (useSubtitleCheckbox.checked) {
+            // 用户勾选了复选框，启用字幕文件选择
+            subtitleFileInput.removeAttribute('disabled');
+        } else {
+            // 用户取消勾选复选框，禁用字幕文件选择
+            subtitleFileInput.setAttribute('disabled', 'disabled');
+        }
+    }
+
+    function submitTranslation() {
+        const translationVideoFile = document.getElementById('translationVideoFile').value;
+        const translationLanguage = document.getElementById('translationLanguage').value;
+        const translationSubtitleFile = document.getElementById('translationSubtitleFile').value;
+        const translationModel = document.getElementById('translationModel').value;
+
+        if (!translationVideoFile || !translationLanguage || !translationModel) {
+            console.log(translationVideoFile)
+            console.log("translationVideoFile" + translationVideoFile + ",translationLanguage" + translationLanguage + ",translationModel" + translationModel)
+            alert('Please enter Video File / language and model size.');
+            return;
+        }
+        // 禁用按钮，显示加载状态
+        const translationButton = document.getElementById('translationButton');
+        translationButton.disabled = true;
+        translationButton.innerHTML = 'Translating...';
+
+        fetch('/subtitle_translate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                chat_id: chatId,
+                translationVideoFile: translationVideoFile,
+                translationLanguage: translationLanguage,
+                translationSubtitleFile: translationSubtitleFile,
+                translationModel: translationModel
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.error);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 你可以在此处处理响应数据
+                // const chatBox = document.getElementById('chatBox');
+                // chatBox.innerHTML = '';
+                console.log(data);
+                openModal(data.message)
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                openModal(error.message || 'An error occurred while processing your request.');
+            })
+            .finally(() => {
+                // 启用按钮，恢复原始状态
+                translationButton.disabled = false;
+                translationButton.innerHTML = 'Translation';
+            });
+    }
+
+</script>
+</body>

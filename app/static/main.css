@@ -1,0 +1,359 @@
+/* Reset some default styles */
+body, p, h1, h2, h3, ul, ol, li {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-size: 16px;
+    line-height: 1.5;
+    font-family: "ColfaxAI", Helvetica, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px;
+}
+
+.icon {
+    width: 256px;
+}
+
+h3 {
+    font-size: 32px;
+    line-height: 40px;
+    font-weight: bold;
+    color: #202123;
+    margin: 16px 0 40px;
+}
+
+.chat-section {
+    width: 80%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.question-textarea {
+    width: calc(100% - 20px);
+    height: 60px;
+    padding: 10px;
+    resize: none;
+    background-color: #fff;
+    color: #353740;
+    margin-bottom: 10px;
+    border: 2px solid #3498db;
+    border-radius: 5px;
+}
+
+.options {
+    display: flex;
+    align-items: center;
+}
+
+label, select, button {
+    margin-right: 10px;
+}
+
+.blue-button, .red-button, .green-button, .first-button {
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/*.audio-class {*/
+/*    !*margin-left: 200px;*!*/
+/*}*/
+
+.blue-button {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.blue-button:hover {
+    background-color: #2980b9;
+}
+
+.action-buttons {
+    margin: 0 100px;
+    /*background-color: #3498db;*/
+    /*color: #fff;*/
+}
+
+.green-button {
+    /*margin-right: 100px;*/
+    background-color: #55d021;
+    color: #fff;
+}
+
+.green-button:hover {
+    background-color: #35c430;
+}
+
+.red-button {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.red-button:hover {
+    background-color: #c0392b;
+}
+
+.image-section {
+    display: flex;
+    /*flex-direction: column;*/
+    /*justify-content: center;*/
+    align-items: center;
+    width: 80%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.download-section {
+    display: flex;
+    flex-direction: column;
+    /*justify-content: center;*/
+    align-items: center;
+    width: 80%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+#imageList {
+    margin-bottom: 20px;
+}
+
+#imageListDropdown {
+    padding: 10px;
+    border-radius: 5px;
+    border: 2px solid #3498db;
+    cursor: pointer;
+}
+
+.image-display {
+    position: relative;
+}
+
+.image-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.prev-btn,
+.next-btn,
+.download-btn {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.prev-btn {
+    margin-right: 10px;
+}
+
+.next-btn:hover,
+.prev-btn:hover {
+    background-color: #45a049;
+}
+
+/*字幕翻译模块*/
+
+/*#translationContent {*/
+/*    margin-bottom: 20px;*/
+/*    width: 100%;*/
+/*}*/
+
+#translationContent input:not(#useSubtitleCheckbox) {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 2px solid #3498db;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#translationSelector,
+#translationSubtitle {
+    margin-bottom: 20px;
+    width: calc(100% - 20px);
+}
+
+#translationContent button {
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+#translationContent button:hover {
+    background-color: #45a049;
+}
+
+
+#downloadVideoForm,
+#downloadMusicForm {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+#downloadVideoForm label,
+#downloadMusicForm label {
+    margin-right: 10px;
+}
+
+#downloadVideoButton{
+    margin-top: 10px;
+}
+
+#videoUrl,
+#musicUrl,
+#videoFilePath,
+#musicFilePath {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 2px solid #3498db;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#downloadVideoForm button,
+#downloadMusicForm button {
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+#downloadVideoForm button:hover,
+#downloadMusicForm button:hover {
+    background-color: #45a049;
+}
+
+/* ... 其他样式 ... */
+
+.download-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.translation-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.download-header, .translation-header {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.download-content, .translation-content {
+    width: 100%;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ... 其他样式 ... */
+
+/* 模态框样式 */
+#myModal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #299898; /* 设置背景颜色为蓝色 */
+    color: #fff; /* 设置文字颜色为白色 */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+    width: 400px; /* 设置模态框宽度 */
+}
+
+/* 关闭按钮样式 */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* 显示关闭按钮时的样式 */
+#myModal.showCloseButton .close {
+    display: block;
+}
+
+/* 为模态框内容添加样式 */
+.modal-content {
+    text-align: center;
+}
+
+/* 为模态框内容中的消息添加样式 */
+#modalMessage {
+    font-size: 20px;
+}
+
+/* 显示模态框时的样式 */
+#myModal.showModal {
+    display: block;
+    opacity: 1;
+}
+
+
