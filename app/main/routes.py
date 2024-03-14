@@ -218,6 +218,10 @@ def get_files_sorted_by_creation_time(directory):
 
 @bp.errorhandler(Exception)
 def handle_parameter_exception(error):
-    response = jsonify({'error': error.message})
+    if error.message:
+        message = error.message
+    else:
+        message = str(error)
+    response = jsonify({'error': message})
     response.status_code = 400
     return response
