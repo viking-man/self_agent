@@ -63,7 +63,7 @@ class CustomPromptTemplate(StringPromptTemplate):
 class CustomOutputParser(AgentOutputParser):
     def parse(self, llm_output: str) -> Union[AgentAction, AgentFinish]:
         # 正则表达式模式，用于匹配所需的格式
-        pattern = r"(History|Music|Video|Painting|Introduce|Web|Default)\('([^']*)'\)"
+        pattern = r"(MBTI|Music|Video|Painting|Introduce|Web|Default)\('([^']*)'\)"
 
         # 使用 re.match 检查字符串是否与模式匹配
         match = re.match(pattern, llm_output)
@@ -118,7 +118,7 @@ class Ning2Agent:
             Tool.from_function(
                 func=default,
                 name="Default",
-                description="Utilize the default web search tool to investigate the user's query, focusing on the most recent web pages that provide explanations. The findings should be used as reference material for the large model."
+                description="Utilize the default web search tool to investigate the user's query, focusing on the most recent web pages that provide explanations. The findings should be used as reference material for the AI assistant."
             ),
             Tool.from_function(
                 func=RagSearch.rag_search,
