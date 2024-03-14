@@ -164,6 +164,7 @@ def download_music():
     if not musicFilePath or not path.exists(musicFilePath):
         raise ParameterException("musicFilePath")
 
+    musicFilePath = str(Path(musicFilePath).absolute())
     music_file = agent_facade.download_spotify_music(musicUrl, musicFilePath)
 
     return jsonify({'message': f'Spotify music download onto {music_file} successfully'})
