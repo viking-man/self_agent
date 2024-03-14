@@ -218,6 +218,7 @@ def get_files_sorted_by_creation_time(directory):
 
 @bp.errorhandler(Exception)
 def handle_parameter_exception(error):
+    logging.info('Route error: %s', str(error))
     if hasattr(error, 'message') and error.message:
         message = error.message
     else:
