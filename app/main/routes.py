@@ -235,4 +235,10 @@ def log_request_info():
     # logging.info('Request path: %s', request.path)
     # logging.info('Request args: %s', request.args)
     # logging.info('Request form: %s', request.form)
-    logging.info('Request json: %s', request.json)
+    if is_json_request():
+        logging.info('Request json: %s', request.json)
+
+
+def is_json_request():
+    content_type = request.headers.get('Content-Type', '')
+    return 'application/json' in content_type
