@@ -6,11 +6,11 @@ import subprocess
 from langchain.tools import tool
 from app.common.utils import string_utils
 from app.common.error import BizException
-
-music_directory = "/Users/viking/song/"
+from app.agent_openai.agent.agent_config import MUSIC_DIRECTORY
 
 template = ('你是一个聪明的歌曲选择AI助手，用户会要求播放一首歌，你首先进行本地音乐搜索，如果本地有这首歌的话，直接进行播放。'
             '如果本地没有，通过工具【1】搜索线上的歌曲链接，下载符合要求的歌曲，然后播放。')
+
 
 class SpotifySearch:
 
@@ -30,7 +30,7 @@ class SpotifySearch:
     @tool
     def download_song(song_url: str):
         """用于下载本地不存在的音乐文件，需要的参数分别为歌曲在spotify的song_url和保存歌曲的目录song_directory"""
-        command = ['spotdl', song_url, '--output', music_directory]
+        command = ['spotdl', song_url, '--output', MUSIC_DIRECTORY]
         subprocess.run(command)
 
     # @tool
@@ -67,7 +67,7 @@ class SpotifySearch:
     def search_local_music(song_name: str):
         """搜索给定目录music_directory是否包含指定的歌曲song_name"""
         chinese_song_name = string_utils.convert_simple2traditional(song_name)
-        for root, dirs, files in os.walk(music_directory):
+        for root, dirs, files in os.walk(MUSIC_DIRECTORY):
             for file in files:
                 if song_name.lower() in file.lower():
                     return os.path.join(root, file)

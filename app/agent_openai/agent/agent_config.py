@@ -15,6 +15,7 @@ os.environ["SERPAPI_API_KEY"] = "Your SerpAPI Key"
 WEB_SEARCH_MAX_RESULT = 2
 RAPID_API_KEY = "3b5dd7d5f5mshd78f146dc498a60p143d49jsn07023d199750"
 STABLE_DIFFUSION_MODEL_PATH = "/Users/viking/ai/develope/ning_agent/app/agent_openai/tools/model/ghostmix_v20Bakedvae.safetensors"
+MUSIC_DIRECTORY = "/Users/viking/song/"
 IMAGE_STORE_PATH = ""
 
 PROMPT_TEMPLATE = """已知信息：
