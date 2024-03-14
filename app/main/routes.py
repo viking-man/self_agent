@@ -225,3 +225,14 @@ def handle_parameter_exception(error):
     response = jsonify({'error': message})
     response.status_code = 400
     return response
+
+
+@bp.before_request
+def log_request_info():
+    # 记录请求参数
+    # logging.info('Request method: %s', str(request))
+    # logging.info('Request method: %s', request.method)
+    # logging.info('Request path: %s', request.path)
+    # logging.info('Request args: %s', request.args)
+    # logging.info('Request form: %s', request.form)
+    logging.info('Request json: %s', request.json)
