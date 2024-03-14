@@ -12,9 +12,6 @@ music_directory = "/Users/viking/song/"
 template = ('你是一个聪明的歌曲选择AI助手，用户会要求播放一首歌，你首先进行本地音乐搜索，如果本地有这首歌的话，直接进行播放。'
             '如果本地没有，通过工具【1】搜索线上的歌曲链接，下载符合要求的歌曲，然后播放。')
 
-songs_path = '/Users/viking/song/'
-
-
 class SpotifySearch:
 
     def download_song_for_web(song_url: str, song_path: str):
