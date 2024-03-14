@@ -174,8 +174,10 @@ class NingAgent:
             ),
             Tool.from_function(
                 func=ChromaRagSearch.rag_search,
-                name="History",
-                description="This method involves researching historical information related to the user's question, providing relevant information to the AI assistant for reference during processing."
+                name="MBTI",
+                # description="This method involves researching historical information related to the user's question, providing relevant information to the AI assistant for reference during processing."
+                # 当用户输入涉及性格特征、人格类型和MBTI的时候，调用此方法，提供MBTI的相关信息
+                description="This method is called when the user input involves character traits, personality types and MBTI, providing information about MBTI"
             ),
             Tool.from_function(
                 func=SpotifySearch.search_download_songs,
