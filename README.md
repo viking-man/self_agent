@@ -9,15 +9,10 @@
 ->flask服务端  
 ->whsiper转化成文本  
 ->agent梳理用户请求并分发
-
 ->agent-tool定制化处理逻辑 
-
 ->agent总结并输出最终结果
-
 ->GPT_SOVITS文本转为音频信息
-
 ->前端直接播放音频文件
-
 
 ## 使用流程  
 python版本需要为3.10  
