@@ -14,15 +14,25 @@
 ->GPT_SOVITS文本转为音频信息  
 ->前端直接播放音频文件  
 
+## 使用说明
+Agent使用的文本转语音tts模型和语音转文本whisper模型的推理比较耗计算资源和内存，不推荐无GPU电脑使用。如果不想使用tts模型，可以自行在routes类中修改。
+
 ## 使用流程  
 python版本需要为3.10  
 
 1. 下载程序
 ```
-git clone https://github.com/viking-man/IntroventsEnglishCorner.git
+git clone git@github.com:viking-man/self_agent.git
 cd IntroventsEnglishCorner
 ```
-2. 初始化项目虚拟环境  
+2. 下载必备程序
+   
+   1. ffmpeg
+3. 配置本地文件
+
+   
+   
+4. 初始化项目虚拟环境  
 ```
   python -m venv venv
   . venv/bin/activate
@@ -30,21 +40,21 @@ cd IntroventsEnglishCorner
 
 windows用户在使用`python -m venv venv`创建虚拟环境后，通过命令`cd venv/Scripts/`到Scripts目录，直接使用activate命令激活创建的虚拟环境
 
-3. 安装对应python包
+5. 安装对应python包
 
    `pip install -r requirements.txt`
-4. 初始化对应数据库
+6. 初始化对应数据库
    ```
    flask db init
    flask db migrate
    flask db upgrade
    ```
-5. 配置本地参数
-6. 运行启动
+7. 配置本地参数
+8. 运行启动
    
    `flask run`
 
-7. 网页打开环境运行地址
+9. 网页打开环境运行地址
    
 
    `127.0.0.1:5000`
