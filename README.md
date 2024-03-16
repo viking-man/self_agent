@@ -5,6 +5,7 @@
 ![Agent助理](https://github.com/viking-man/self_agent/assets/22117154/b71e73a5-746d-4d2e-9e83-7ae0488205bf)
 
 # 整体思路
+![剧本流](https://github.com/viking-man/self_agent/assets/22117154/e262679f-66bd-4f3d-8c36-4d2f04aaaf88)
 
 ## 基本流程
 ->前端读取音频信息  
