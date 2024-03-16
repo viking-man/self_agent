@@ -1,4 +1,5 @@
 ## Self_Agent 宁宁小助理
+### 介绍视频：https://www.bilibili.com/video/BV1wW421w7Ue/
 #### 程序主体框架使用flask作为前后端链接，对话记忆存储使用SQLite轻量存储，代理内部使用LangChain作为处理框架，梳理用户请求、分发对应处理工具、定制执行逻辑，语音处理使用Whisper、GPT_SOVITS，画图使用StableDiffusion模型等。
 
 ## 整体架构图
