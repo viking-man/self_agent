@@ -2,7 +2,7 @@
 #### 程序主体思路使用类似剧本的定制逻辑，主体框架使用flask作为前后端链接，Agent内部使用Langchain作为处理框架，梳理用户请求、分发对应处理工具、定制执行逻辑，语音处理使用whisper、GPT_SOVITS，画图使用StableDiffusion等。
 
 ## 整体架构图
-![Agent助理](https://github.com/viking-man/self_agent/assets/22117154/b71e73a5-746d-4d2e-9e83-7ae0488205bf)
+![Agent助理](https://github.com/viking-man/self_agent/assets/22117154/94c9d99f-25bf-4330-8a79-a2afc0ec7c8f)
 
 ## 整体思路
 ![剧本流](https://github.com/viking-man/self_agent/assets/22117154/e262679f-66bd-4f3d-8c36-4d2f04aaaf88)
