@@ -1,6 +1,6 @@
 from langchain.agents import tool
 import requests
-from app.agent_openai.agent.agent_config import WEB_SEARCH_MAX_RESULT, RAPID_API_KEY
+from app.agent_openai.custom_config import WEB_SEARCH_MAX_RESULT, RAPID_API_KEY
 import logging
 from app.common.error import ParameterException
 

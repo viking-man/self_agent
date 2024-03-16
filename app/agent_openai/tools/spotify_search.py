@@ -6,7 +6,7 @@ import subprocess
 from langchain.tools import tool
 from app.common.utils import string_utils
 from app.common.error import BizException
-from app.agent_openai.agent.agent_config import MUSIC_DIRECTORY
+from app.agent_openai.custom_config import *
 
 template = ('你是一个聪明的歌曲选择AI助手，用户会要求播放一首歌，你首先进行本地音乐搜索，如果本地有这首歌的话，直接进行播放。'
             '如果本地没有，通过工具【1】搜索线上的歌曲链接，下载符合要求的歌曲，然后播放。')
@@ -37,8 +37,8 @@ class SpotifySearch:
     def search_spotify_music(track_name: str, artist: str):
         """搜索歌曲在spotify上的歌手名称和对应的url，格式为[{"artist:url"}]"""
         # Set up credentials
-        client_credentials_manager = SpotifyClientCredentials(client_id="55ed24ee34534fe48d11b0795f378482",
-                                                              client_secret="1128b4939fbd45e0969319d9bbee5575")
+        client_credentials_manager = SpotifyClientCredentials(client_id=SPOTIFY_CLIENT_ID,
+                                                              client_secret=SPOTIFY_CLIENT_SECRET)
         sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
         # Search for a song

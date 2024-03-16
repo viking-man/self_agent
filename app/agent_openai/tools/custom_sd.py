@@ -1,5 +1,5 @@
 from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
-from app.agent_openai.agent.agent_config import STABLE_DIFFUSION_MODEL_PATH
+from app.agent_openai.custom_config import STABLE_DIFFUSION_MODEL_PATH
 from langchain.agents import tool
 from torch import torch
 import time
@@ -42,6 +42,8 @@ def sculpture(prompt: str = ""):
     image_file = str(Path("app/files/image",
                           "image_" + str(int(time.time())) + ".png").absolute())
     image.save(image_file)
+
+
     return image_file
 
 

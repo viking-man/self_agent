@@ -1,9 +1,0 @@
-BERT_PATH = "/Users/viking/ai/github/GPT-SoVITS/GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large"
-# CNHUBERT_BASE_PATH = "/Users/viking/ai/github/GPT-SoVITS/GPT_SoVITS/pretrained_models/chinese-hubert-base",
-CNHUBERT_BASE_PATH = "/Users/viking/ai/develope/ning_agent/external/pretrained_models/cnhubert_base_path"
-GPT_MODEL_PATH = "/Users/viking/ai/github/GPT-SoVITS/GPT_weights/ningning-e15.ckpt"
-SOVITS_MODEL_PATH = "/Users/viking/ai/github/GPT-SoVITS/SoVITS_weights/ningning_e8_s80.pth"
-EXAMPLE_WAV = "/Users/viking/ai/study/GPT-SoVITS/GPT_SoVITS/prepare_datasets/stage.wav_1266880_1398080.wav"
-EXAMPLE_TEXT = "发了一张刚才的自拍，然后我爸我妈说美"
-EXAMPLE_TEXT_LANG = "all_zh"
-OUTPUT_WAV_PATH = ""

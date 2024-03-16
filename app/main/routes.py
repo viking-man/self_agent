@@ -11,9 +11,11 @@ import io
 import time
 from pathlib import Path
 from app.agent_openai import agent_facade
-from app.common.error import ParameterException
+from app.common.error import *
+from app.common.utils.file_utils import delete_file
 from os import path
 from app.open_ai.subtitle_translator import SubtitleTranslator
+from app.agent_openai.custom_config import ENABLE_SOVITS
 
 
 @bp.route('/')
@@ -40,7 +42,10 @@ def text_chat():  # put application's code here
     ai_message = agent_facade.dispatch(user_message, chat_history)
 
     # tts转成语音
-    audio_id = gpt_tts_proxy.convert_to_audio(user_id, chat_id, ai_message)
+    if ENABLE_SOVITS:
+        audio_id = gpt_tts_proxy.convert_to_audio(user_id, chat_id, ai_message)
+    else:
+        audio_id = gtts_proxy.convert_to_audio(user_id, chat_id, ai_message, "en")
 
     # 返回信息
     return jsonify({
@@ -86,7 +91,10 @@ def speech_chat():
     ai_message = agent_facade.dispatch(chat_text, chat_history)
 
     # tts转成语音
-    audio_id = gpt_tts_proxy.convert_to_audio(user_id, chat_id, ai_message)
+    if ENABLE_SOVITS:
+        audio_id = gpt_tts_proxy.convert_to_audio(user_id, chat_id, ai_message)
+    else:
+        audio_id = gtts_proxy.convert_to_audio(user_id, chat_id, ai_message, "en")
 
     return jsonify({
         'user_message': chat_text,
@@ -101,6 +109,24 @@ def clear_history():
     userid = data.get('userId')
     print(data)
     return jsonify({'message': 'History cleared successfully'})
+
+
+@bp.route('/delete_image', methods=['DELETE'])
+def delete_image():
+    file_name = request.args.get('fileName')
+
+    # 构造完整的文件路径
+    file_path = os.path.join(os.path.dirname(__file__), f"../files/image/{file_name}")
+    if not os.path.exists(file_path):
+        raise ParameterException("file_name")
+
+    # 删除图片逻辑
+    delete_result = delete_file(file_path)
+
+    if delete_result:
+        return jsonify({'message': f'Image->{file_name} deleted successfully'})
+    else:
+        return jsonify({'message': 'Failed to delete image'}, 500)
 
 
 @bp.route('/get_image_list', methods=['POST'])

@@ -1,14 +1,12 @@
 from langchain.agents import Tool
 from langchain import PromptTemplate, LLMChain
 from app.agent_openai.tools.web_search import GoogleSearch
-from app.agent_openai.tools.rag_search import RagSearch
 from app.agent_openai.tools.rag_search_chroma import ChromaRagSearch
 from app.agent_openai.tools.spotify_search import SpotifySearch
 from app.agent_openai.tools.youtube_search import YoutubeSearch
 from app.agent_openai.tools.custom_sd import sculpture
 from app.agent_openai.tools.introduce import introduce, default
 from langchain.agents import BaseSingleActionAgent, AgentOutputParser, LLMSingleActionAgent, AgentExecutor
-from langchain.agents.agent import MultiActionAgentOutputParser
 from typing import List, Tuple, Any, Union, Optional, Type
 from langchain.schema import AgentAction, AgentFinish
 from langchain.prompts import StringPromptTemplate
@@ -18,7 +16,6 @@ from app.agent_openai.agent.agent_template import *
 import re
 from app.open_ai.openai_config import OPENAI_API_KEY, TAVILY_API_KEY
 from langchain.agents import AgentExecutor, create_react_agent
-from langchain import hub
 
 
 # 根据执行步骤确定每个tool的特殊规则和执行模板
@@ -80,70 +77,6 @@ class CustomOutputParser(AgentOutputParser):
             action = match.group(1).strip()
             action_input = match.group(2).strip()
             return AgentAction(tool=action, tool_input=action_input.strip(" ").strip('"'), log=llm_output)
-
-
-class CustomMultiOutputParser(MultiActionAgentOutputParser):
-    def parse(self, llm_output: str) -> Union[AgentAction, AgentFinish]:
-        # 正则表达式模式，用于匹配所需的格式
-        pattern = r"(History|Music|Video|Painting|Default|Web)\('([^']*)'\)"
-
-        # 使用 re.match 检查字符串是否与模式匹配
-        match = re.match(pattern, llm_output)
-
-        # 如果 llm 没有返回 GoogleSearch() 则认为直接结束指令
-        if not match:
-            return AgentFinish(
-                return_values={"output": llm_output.strip()},
-                log=llm_output,
-            )
-        # 否则的话都认为需要调用 Tool
-        else:
-            action = match.group(1).strip()
-            action_input = match.group(2).strip()
-            return AgentAction(tool=action, tool_input=action_input.strip(" ").strip('"'), log=llm_output)
-
-
-# 使用langchain本身的init方法来创建agent
-class Ning2Agent:
-    tools: any
-    ning_agent: any
-    prompt: any
-    llm: any
-    agent_executor: any
-
-    def __init__(self):
-        # self.tools = [TavilySearchResults(max_results=1)]
-        # print(str(self.tools))
-        self.tools = [
-            Tool.from_function(
-                func=default,
-                name="Default",
-                description="Utilize the default web search tool to investigate the user's query, focusing on the most recent web pages that provide explanations. The findings should be used as reference material for the AI assistant."
-            ),
-            Tool.from_function(
-                func=RagSearch.rag_search,
-                name="History",
-                description="This method involves researching historical literature related to the user's question,providing relevant information to the AI assistant for reference during processing."
-            ),
-        ]
-        self.prompt = langchain_generate_template2
-        # Get the prompt to use - you can modify this!
-        self.prompt = hub.pull("hwchase17/react")
-        print(self.prompt)
-        # self.prompt = PromptTemplate(
-        #     template=langchain_generate_template,
-        #     input_variables=['input']
-        # )
-        # Choose the LLM to use
-        self.llm = ChatOpenAI(temperature=0, model=ChatGPTModel.GPT3.value, openai_api_key=OPENAI_API_KEY)
-        # Construct the ReAct agent
-        self.agent = create_react_agent(self.llm, self.tools, self.prompt)
-        # Create an agent executor by passing in the agent and tools
-        self.agent_executor = AgentExecutor(agent=self.agent, tools=self.tools, verbose=True)
-
-    def query(self, input):
-        result = self.agent_executor.invoke({"input": input})
-        return result
 
 
 # 使用自定义的组件来创建agent，可以比较灵活实现各个模块

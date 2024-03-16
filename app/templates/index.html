@@ -45,6 +45,7 @@
                     <button class="prev-btn" onclick="showPreviousImage()">Previous</button>
                     <button class="next-btn" onclick="showNextImage()">Next</button>
                     <button class="download-btn" onclick="downloadImage()">Download</button>
+                    <button class="delete-btn" onclick="deleteImage()">Delete</button>
                 </div>
             </div>
         </div>
@@ -511,6 +512,41 @@
                 openModal(error.message || 'An error occurred while processing your request.');
             });
     }
+
+    function deleteImage() {
+        // 获取当前图片的文件名
+        const selectedImageName = imageListData[currentIndex];
+
+        if (!selectedImageName) {
+            alert('Please select an image to delete.');
+            return;
+        }
+
+        if (confirm('Are you sure you want to delete this image?')) {
+            const deleteUrl = `/delete_image?fileName=${selectedImageName}`;
+
+            fetch(deleteUrl, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 处理删除成功的情况，例如刷新图片列表等
+                    alert(data.message);
+                    // 刷新图片列表
+                    getImageList();
+                })
+                .catch(error => {
+                    console.error('Error deleting image:', error.message);
+                    openModal(error.message || 'An error occurred while deleting the image.');
+                });
+        }
+    }
+
 
     function toggleDownloadSection() {
         const downloadContent = document.querySelector('.download-content');

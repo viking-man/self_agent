@@ -26,6 +26,10 @@ def convert_simple2traditional(text):
     else:
         return text
 
+def contains_english(text):
+    pattern = re.compile(r'[a-zA-Z]')
+    return bool(pattern.search(text))
+
 
 if __name__ == '__main__':
     # 示例

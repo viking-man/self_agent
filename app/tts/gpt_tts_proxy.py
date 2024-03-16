@@ -1,4 +1,4 @@
-from app.tts.gpt_tts_config import *
+from app.agent_openai.custom_config import *
 import soundfile as sf
 import logging
 from GPT_SoVITS.inference_webui import InferenceWebUI
@@ -7,13 +7,22 @@ import time
 from app.type import AudioType
 from app import db
 from pathlib import Path
+from app.common.utils.string_utils import contains_english
 
 
 class GptTTSModel:
+    _instance = None
 
-    def __init__(self):
-        super().__init__()
-        self.init_models()
+    def __init__(self, flag):
+        self.flag = flag
+        if flag:
+            self.init_models()
+
+    @classmethod
+    def get_instance(cls, flag):
+        if not cls._instance:
+            cls._instance = cls(flag)
+        return cls._instance
 
     def init_models(self):
         self.GPT_model_path = GPT_MODEL_PATH
@@ -45,16 +54,6 @@ class GptTTSModel:
         logging.info(f"合成完成！输出路径：{file_path}")
 
 
-gptTTSModel = GptTTSModel()
-
-import re
-
-
-def contains_english(text):
-    pattern = re.compile(r'[a-zA-Z]')
-    return bool(pattern.search(text))
-
-
 def convert_to_audio(user_id, chat_id, text_content):
     # convert text to speech
     if contains_english(text_content):
@@ -66,7 +65,7 @@ def convert_to_audio(user_id, chat_id, text_content):
     file_path = str(Path("app/files/audio/output",
                          user_id + "_" + chat_id + "_" + str(int(time.time())) + ".wav").absolute())
 
-    gptTTSModel.text_to_speech(text_content, lang, file_path)
+    GptTTSModel.get_instance(ENABLE_SOVITS).text_to_speech(text_content, lang, file_path)
 
     with open(file_path, 'rb') as f:
         audio_data = f.read()
@@ -78,4 +77,4 @@ def convert_to_audio(user_id, chat_id, text_content):
 
 
 if __name__ == "__main__":
-    convert_to_audio("123", "456", "我是宁艺卓，我爱唱歌，爱大自然，爱一切充满生命力的东西，我爱蒋威")
+    convert_to_audio("123", "456", "我是宁艺卓，我爱唱歌，爱大自然，爱一切充满生命力的东西")

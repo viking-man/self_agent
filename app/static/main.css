@@ -177,13 +177,26 @@ label, select, button {
     cursor: pointer;
 }
 
+.delete-btn {
+    background-color: #851133;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
 .prev-btn {
     margin-right: 10px;
 }
 
 .next-btn:hover,
-.prev-btn:hover {
+.prev-btn:hover,
+.download-btn:hover {
     background-color: #45a049;
+}
+
+.delete-btn:hover {
+    background-color: #c21842;
 }
 
 /*字幕翻译模块*/
@@ -234,7 +247,7 @@ label, select, button {
     margin-right: 10px;
 }
 
-#downloadVideoButton{
+#downloadVideoButton {
     margin-top: 10px;
 }
 
