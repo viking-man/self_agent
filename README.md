@@ -1,10 +1,11 @@
 ## Self_Agent 宁宁小助理
-#### 程序主体思路使用类似剧本的定制逻辑，主体框架使用flask作为前后端链接，Agent内部使用Langchain作为处理框架，梳理用户请求、分发对应处理工具、定制执行逻辑，语音处理使用whisper、GPT_SOVITS，画图使用StableDiffusion等。
+#### 程序主体框架使用flask作为前后端链接，对话记忆存储使用SQLite轻量存储，代理内部使用LangChain作为处理框架，梳理用户请求、分发对应处理工具、定制执行逻辑，语音处理使用Whisper、GPT_SOVITS，画图使用StableDiffusion模型等。
 
 ## 整体架构图
 ![Agent助理](https://github.com/viking-man/self_agent/assets/22117154/94c9d99f-25bf-4330-8a79-a2afc0ec7c8f)
 
 ## 整体思路
+程序的整体思路是仿照电影剧本，设计出不同用户请求下需要执行的定制逻辑，智能体本身判断、分发，内置大模型作为剧本之外的补充和细节部分的优化
 ![剧本流](https://github.com/viking-man/self_agent/assets/22117154/e262679f-66bd-4f3d-8c36-4d2f04aaaf88)
 
 ## 基本流程
