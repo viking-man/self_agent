@@ -31,6 +31,7 @@ git clone git@github.com:viking-man/self_agent.git
    
    1. ffmpeg
 3. 配置本地文件：app/agent_openai/custom_config.py
+
 | 配置项   | 配置解释 | 示例    | 网址    |
 |--------|------|---------|---------|
 | RAPID_API_KEY   | Google搜索用到的rapid-api-key   | "3b5dd7d5f5mshd78f146dc498a60p143d49jsn07023d199"    | https://rapidapi.com/UnlimitedAPI/api/google-web-search1  |
