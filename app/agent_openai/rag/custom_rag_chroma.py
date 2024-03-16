@@ -74,6 +74,7 @@ class ChromaVectorStore:
 
             vector_store.persist()
             logging.info("向量生成成功")
+
             return vs_path, loaded_files
         else:
             logging.info("文件均未成功加载，请检查依赖包或替换为其他文件再次上传。")

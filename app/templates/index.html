@@ -536,7 +536,7 @@
                 })
                 .then(data => {
                     // 处理删除成功的情况，例如刷新图片列表等
-                    alert(data.message);
+                    openModal(data.message);
                     // 刷新图片列表
                     getImageList();
                 })

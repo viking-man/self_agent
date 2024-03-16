@@ -41,7 +41,7 @@ class CustomPromptTemplate(StringPromptTemplate):
                 related_content += observation[1]
             else:
                 background_content += f"{observation}\n"
-            if "Default" == action.tool or "MBTI" == action.tool:
+            if "Default" == action.tool or "History" == action.tool:
                 template = generate_template_zh
             elif "Introduce" == action.tool:
                 return observation
@@ -60,7 +60,7 @@ class CustomPromptTemplate(StringPromptTemplate):
 class CustomOutputParser(AgentOutputParser):
     def parse(self, llm_output: str) -> Union[AgentAction, AgentFinish]:
         # 正则表达式模式，用于匹配所需的格式
-        pattern = r"(MBTI|Music|Video|Painting|Introduce|Web|Default)\('([^']*)'\)"
+        pattern = r"(History|Music|Video|Painting|Introduce|Web|Default)\('([^']*)'\)"
 
         # 使用 re.match 检查字符串是否与模式匹配
         match = re.match(pattern, llm_output)
@@ -106,10 +106,10 @@ class NingAgent:
             ),
             Tool.from_function(
                 func=ChromaRagSearch.rag_search,
-                name="MBTI",
-                # description="This method involves researching historical information related to the user's question, providing relevant information to the AI assistant for reference during processing."
+                name="History",
+                description="This method involves researching historical information related to the user's question, providing relevant information to the AI assistant for reference during processing."
                 # 当用户输入涉及性格特征、人格类型和MBTI的时候，调用此方法，提供MBTI的相关信息
-                description="This method is called when the user input involves character traits, personality types and MBTI, providing information about MBTI"
+                # description="This method is called when the user input involves character traits, personality types and MBTI, providing information about MBTI"
             ),
             Tool.from_function(
                 func=SpotifySearch.search_download_songs,
