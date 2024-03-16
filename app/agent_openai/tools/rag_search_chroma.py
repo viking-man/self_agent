@@ -25,11 +25,14 @@ class ChromaRagSearch:
     def rag_search(query: str = ""):
         """This method involves researching historical information related to the user's question,
         providing relevant information to the AI assistant for reference during processing."""
-        related_content = vector_store.query_knowledge(query=query)
-        formed_related_content = "\n" + related_content
 
         logging.info(f"RagSearch.rag_search request->{query}")
+
+        related_content = vector_store.query_knowledge(query=query)
+        formed_related_content = "\n" + related_content
+        logging.info(f"RagSearch.rag_search response->{formed_related_content}")
+
         current_content = googleSearch.web_search(query)
-        logging.info(f"RagSearch.rag_search response->{current_content}")
+        logging.info(f"RagSearch.web_search response->{current_content}")
 
         return [formed_related_content, current_content]

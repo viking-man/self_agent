@@ -1,5 +1,4 @@
 from typing import Any, List, Dict, Mapping, Optional
-import os
 from langchain_community.document_loaders import TextLoader, UnstructuredFileLoader
 from langchain.vectorstores import FAISS
 import datetime
@@ -174,11 +173,7 @@ class LocalDocQA:
         self.filepath = filepath
         self.embeddings = embeddings
         self.top_k = VECTOR_SEARCH_TOP_K
-        # self.llm = ChatOpenAI(temperature=0, model=ChatGPTModel.GPT3.value, openai_api_key=OPENAI_API_KEY)
-        # self.conversation_with_summary = ConversationChain(llm=self.llm,
-        #                                                    memory=ConversationSummaryBufferMemory(llm=self.llm,
-        #                                                                                           max_token_limit=256),
-        #                                                    verbose=True)
+
 
     def query_knowledge(self, query: str):
         vector_store = FAISS.load_local(self.vs_path, self.embeddings)
@@ -187,31 +182,3 @@ class LocalDocQA:
         related_docs = get_docs_with_score(related_docs_with_score)
         related_content = get_related_content(related_docs)
         return related_content
-
-    # def get_knowledge_based_answer(self, query: str):
-    #     related_content = self.query_knowledge(query)
-    #     prompt = PromptTemplate(
-    #         input_variables=["context", "question"],
-    #         template=PROMPT_TEMPLATE,
-    #     )
-    #     pmt = prompt.format(context=related_content,
-    #                         question=query)
-    #
-    #     # answer=self.conversation_with_summary.predict(input=pmt)
-    #     answer = self.llm(pmt)
-    #     return answer
-
-
-if __name__ == '__main__':
-    from langchain.embeddings.huggingface import HuggingFaceEmbeddings
-
-    EMBEDDING_DEVICE = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
-    embeddings = HuggingFaceEmbeddings(model_name="GanymedeNil/text2vec-large-chinese",
-                                       model_kwargs={'device': EMBEDDING_DEVICE})
-    qa_doc = LocalDocQA(filepath=LOCAL_CONTENT,
-                        vs_path=VS_PATH,
-                        embeddings=embeddings,
-                        init=False)
-
-    result = qa_doc.query_knowledge("中国最早朝代")
-    print(result)
