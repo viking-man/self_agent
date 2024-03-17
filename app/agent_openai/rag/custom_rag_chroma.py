@@ -1,13 +1,11 @@
-# import
-from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.embeddings.sentence_transformer import (
-    SentenceTransformerEmbeddings,
-)
-from langchain_community.vectorstores import Chroma
-from typing import List
 from os import path
 import datetime
 import logging
+
+import torch
+from langchain.embeddings.huggingface import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
+
 from app.agent_openai.agent.agent_config import *
 from app.common.error import ParameterException, BizException
 from app.agent_openai.rag.custom_rag import load_file, load_dir, torch_gc, get_related_content, get_docs_with_score
@@ -91,19 +89,13 @@ class ChromaVectorStore:
 
 
 if __name__ == '__main__':
-    from langchain.embeddings.huggingface import HuggingFaceEmbeddings
-    import torch
-
     EMBEDDING_DEVICE = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
     embeddings = HuggingFaceEmbeddings(model_name="GanymedeNil/text2vec-large-chinese",
                                        model_kwargs={'device': EMBEDDING_DEVICE})
-
-    # embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
     qa_doc = ChromaVectorStore(filepath=LOCAL_CONTENT,
                                vs_path=CHROMA_VS_PATH,
                                embeddings=embeddings,
                                init=True)
-
     result = qa_doc.query_knowledge("中国最早朝代")
     print(result)

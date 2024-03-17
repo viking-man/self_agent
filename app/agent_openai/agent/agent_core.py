@@ -1,21 +1,23 @@
+import re
+from typing import List, Tuple, Any, Union, Optional, Type
+
 from langchain.agents import Tool
-from langchain import PromptTemplate, LLMChain
+from langchain import LLMChain
+from langchain.agents import AgentOutputParser, LLMSingleActionAgent
+from langchain.schema import AgentAction, AgentFinish
+from langchain.prompts import StringPromptTemplate
+from langchain.chat_models import ChatOpenAI
+from langchain.agents import AgentExecutor
+
 from app.agent_openai.tools.web_search import GoogleSearch
 from app.agent_openai.tools.rag_search_chroma import ChromaRagSearch
 from app.agent_openai.tools.spotify_search import SpotifySearch
 from app.agent_openai.tools.youtube_search import YoutubeSearch
 from app.agent_openai.tools.custom_sd import sculpture
 from app.agent_openai.tools.introduce import introduce, default
-from langchain.agents import BaseSingleActionAgent, AgentOutputParser, LLMSingleActionAgent, AgentExecutor
-from typing import List, Tuple, Any, Union, Optional, Type
-from langchain.schema import AgentAction, AgentFinish
-from langchain.prompts import StringPromptTemplate
-from langchain.chat_models import ChatOpenAI
 from app.type import ChatGPTModel
 from app.agent_openai.agent.agent_template import *
-import re
-from app.open_ai.openai_config import OPENAI_API_KEY, TAVILY_API_KEY
-from langchain.agents import AgentExecutor, create_react_agent
+from app.open_ai.openai_config import OPENAI_API_KEY
 
 
 # 根据执行步骤确定每个tool的特殊规则和执行模板
@@ -73,7 +75,6 @@ class CustomOutputParser(AgentOutputParser):
             )
         # 否则的话都认为需要调用Tool
         else:
-
             action = match.group(1).strip()
             action_input = match.group(2).strip()
             return AgentAction(tool=action, tool_input=action_input.strip(" ").strip('"'), log=llm_output)

@@ -1,13 +1,15 @@
+import logging
 from typing import Any, List, Dict, Mapping, Optional
-from langchain_community.document_loaders import TextLoader, UnstructuredFileLoader
-from langchain.vectorstores import FAISS
 import datetime
 import torch
+
 from tqdm import tqdm
-from app.agent_openai.agent.agent_config import *
+from langchain_community.document_loaders import TextLoader, UnstructuredFileLoader
+from langchain.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import PyPDFLoader
-import logging
+
+from app.agent_openai.agent.agent_config import *
 
 
 def load_txt_file(filepath):
@@ -173,7 +175,6 @@ class LocalDocQA:
         self.filepath = filepath
         self.embeddings = embeddings
         self.top_k = VECTOR_SEARCH_TOP_K
-
 
     def query_knowledge(self, query: str):
         vector_store = FAISS.load_local(self.vs_path, self.embeddings)
